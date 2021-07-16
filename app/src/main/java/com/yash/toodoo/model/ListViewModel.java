@@ -15,7 +15,7 @@ public class ListViewModel extends AndroidViewModel {
 
     private LiveData<List<com.yash.toodoo.database.List>> mAllList;
 
-    public ListViewModel(Application application){
+    public ListViewModel(Application application) {
         super(application);
 
         mRepository = new ListRepository(application);
@@ -23,10 +23,12 @@ public class ListViewModel extends AndroidViewModel {
         mAllList = mRepository.getAllList();
     }
 
-    public LiveData<List<com.yash.toodoo.database.List>> getAllList(){ return mAllList; }
+    public LiveData<List<com.yash.toodoo.database.List>> getAllList() { return mAllList; }
 
-    public List<com.yash.toodoo.database.List> getAllLists(){ return mRepository.getAllLists(); }
+    public List<com.yash.toodoo.database.List> getAllLists() { return mRepository.getAllLists(); }
 
-    public void insert(com.yash.toodoo.database.List list){ mRepository.insert(list); }
+    public void insert(com.yash.toodoo.database.List list) { mRepository.insert(list); }
+
+    public void delete(com.yash.toodoo.database.List list) { mRepository.delete(list); }
 
 }

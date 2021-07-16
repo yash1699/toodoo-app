@@ -24,8 +24,15 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListAdapterVie
 
     private Context context;
 
-    public ListAdapter(Context context){
+    private ListItemOnLongClickListener mLongClickListener;
+
+    public ListAdapter(Context context, ListItemOnLongClickListener longClickListener){
         this.context = context;
+        mLongClickListener = longClickListener;
+    }
+
+    public interface ListItemOnLongClickListener{
+        void onListItemLongClick(String list);
     }
 
     @NonNull
@@ -75,7 +82,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListAdapterVie
     }
 
 
-    class ListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class ListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         public final TextView mListItemTextView;
 
@@ -83,13 +90,30 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListAdapterVie
             super(itemView);
             mListItemTextView = itemView.findViewById(R.id.tv_list_item);
             mListItemTextView.setOnClickListener(this);
-
+            mListItemTextView.setOnLongClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
             Intent addTodoIntent = new Intent(context, AddTodoActivity.class);
             context.startActivity(addTodoIntent);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            int counter = 0;
+            String list = "";
+            for (Iterator<String> it=mLists.iterator(); it.hasNext();it.next()){
+                if(counter==adapterPosition){
+                    list = it.next();
+                    break;
+                }
+                counter++;
+            }
+
+            mLongClickListener.onListItemLongClick(list);
+            return true;
         }
     }
 }

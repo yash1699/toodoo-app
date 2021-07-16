@@ -12,9 +12,11 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
 import android.app.Application;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.os.Vibrator;
 import android.view.View;
 import android.widget.TextView;
 
@@ -25,7 +27,7 @@ import com.yash.toodoo.model.ListViewModel;
 
 import java.util.ArrayList;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements ListAdapter.ListItemOnLongClickListener {
 
     private RecyclerView mRecyclerView;
     private FloatingActionButton mAddNewListFAB;
@@ -50,12 +52,11 @@ public class MainActivity extends AppCompatActivity {
 
         mRecyclerView.setHasFixedSize(true);
 
-        mAdapter = new ListAdapter(this);
+        mAdapter = new ListAdapter(this, this);
         mRecyclerView.setAdapter(mAdapter);
 
         if (mAdapter.getItemCount() != 0){
-            mNoListDisplay.setVisibility(View.INVISIBLE);
-            mRecyclerView.setVisibility(View.VISIBLE);
+            showRecyclerView();
         }
 
         mAddNewListFAB.setOnClickListener(v -> {
@@ -85,8 +86,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         if(mAdapter.getItemCount()!=0){
-            mNoListDisplay.setVisibility(View.INVISIBLE);
-            mRecyclerView.setVisibility(View.VISIBLE);
+            showRecyclerView();
         }
     }
 
@@ -103,17 +103,37 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE){
             if(resultCode == Activity.RESULT_OK){
-                assert data != null;
-                if(data.hasExtra(Intent.EXTRA_TEXT)){
-                    String list = data.getStringExtra(Intent.EXTRA_TEXT);
-                    mAdapter.addNewList(list);
-                    mListViewModel.insert(new List(list));
+                if (data != null){
+                    if(data.hasExtra(Intent.EXTRA_TEXT)){
+                        String list = data.getStringExtra(Intent.EXTRA_TEXT);
+                        mListViewModel.insert(new List(list));
+                        mAdapter.addNewList(list);
+                        if(mRecyclerView.getVisibility() == View.INVISIBLE){
+                            showRecyclerView();
+                        }
+                    }
                 }
             }
         }
 
         if(mAdapter.getItemCount() != 0){
-            mNoListDisplay.setVisibility(View.INVISIBLE);
+            showRecyclerView();
+        }
+    }
+
+    private void showRecyclerView(){
+        mNoListDisplay.setVisibility(View.INVISIBLE);
+        mRecyclerView.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void onListItemLongClick(String list) {
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(1000);
+        mListViewModel.delete(new List(list));
+        mAdapter.removeList(list);
+        if(mAdapter.getItemCount()==0){
+            mNoListDisplay.setVisibility(View.VISIBLE);
             mRecyclerView.setVisibility(View.VISIBLE);
         }
     }

@@ -1,7 +1,10 @@
 package com.yash.toodoo;
 
 import android.app.Application;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.AsyncTask;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.lifecycle.LiveData;
 
@@ -16,9 +19,11 @@ public class ListRepository {
 
     private LiveData<List<com.yash.toodoo.database.List>> mAllList;
 
-    public ListRepository(Application application){
-        ToODoODatabase db = ToODoODatabase.getInstance(application);
+    private Application mApplication;
 
+    public ListRepository(Application application){
+        mApplication = application;
+        ToODoODatabase db = ToODoODatabase.getInstance(mApplication);
         mListDao = db.listDao();
 
         mAllList = mListDao.getAllList();
@@ -28,24 +33,57 @@ public class ListRepository {
         return mAllList;
     }
 
-    public void insert(com.yash.toodoo.database.List list){
-        new insertAsyncTask(mListDao).execute(list);
+    public void insert(com.yash.toodoo.database.List list) {
+        new insertAsyncTask(mListDao, mApplication).execute(list);
+    }
+
+    public void delete(com.yash.toodoo.database.List list) {
+        new deleteAsyncTask(mListDao).execute(list);
     }
 
     public List<com.yash.toodoo.database.List> getAllLists(){
         return mListDao.getAllLists();
     }
 
-    private static class insertAsyncTask extends AsyncTask<com.yash.toodoo.database.List,Void, Void>{
+    private static class insertAsyncTask extends AsyncTask<com.yash.toodoo.database.List,Void, Boolean> {
         private ListDao mAsyncListDao;
 
-        insertAsyncTask(ListDao dao){
+        private Application mApplication;
+
+        insertAsyncTask(ListDao dao, Application application){
+            mApplication = application;
             mAsyncListDao = dao;
         }
 
         @Override
+        protected Boolean doInBackground(com.yash.toodoo.database.List... lists) {
+            boolean isSuccess = true;
+            try {
+                mAsyncListDao.insert(lists[0]);
+            } catch (SQLiteConstraintException exception){
+                Log.e("SQLiteInsertError" , exception.toString());
+                isSuccess = false;
+            }
+            return isSuccess;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if(!result){
+                Toast.makeText(mApplication.getApplicationContext(), "List with same name already exist.", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    private static class deleteAsyncTask extends AsyncTask<com.yash.toodoo.database.List, Void, Void> {
+        private ListDao mAsyncListDao;
+
+        deleteAsyncTask(ListDao dao) { mAsyncListDao = dao; }
+
+        @Override
         protected Void doInBackground(com.yash.toodoo.database.List... lists) {
-            mAsyncListDao.insert(lists[0]);
+            mAsyncListDao.delete(lists[0]);
             return null;
         }
     }
