@@ -49,15 +49,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListAdapterVie
 
     @Override
     public void onBindViewHolder(@NonNull ListAdapterViewHolder holder, int position) {
-        String list = "";
-        int counter = 0;
-        for (Iterator<String> it=mLists.iterator(); it.hasNext();it.next()){
-            if(counter==position){
-                list = it.next();
-                break;
-            }
-            counter++;
-        }
+        String list = getSetItem(position);
         holder.mListItemTextView.setText(list);
     }
 
@@ -81,6 +73,19 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListAdapterVie
         notifyDataSetChanged();
     }
 
+    protected String getSetItem(int position){
+        String list = "";
+        int counter = 0;
+        for (Iterator<String> it=mLists.iterator(); it.hasNext();it.next()){
+            if(counter==position){
+                list = it.next();
+                break;
+            }
+            counter++;
+        }
+        return list;
+    }
+
 
     class ListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
@@ -95,23 +100,17 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListAdapterVie
 
         @Override
         public void onClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            String list = getSetItem(adapterPosition);
             Intent addTodoIntent = new Intent(context, AddTodoActivity.class);
+            addTodoIntent.putExtra(Intent.EXTRA_TEXT, list);
             context.startActivity(addTodoIntent);
         }
 
         @Override
         public boolean onLongClick(View v) {
             int adapterPosition = getAdapterPosition();
-            int counter = 0;
-            String list = "";
-            for (Iterator<String> it=mLists.iterator(); it.hasNext();it.next()){
-                if(counter==adapterPosition){
-                    list = it.next();
-                    break;
-                }
-                counter++;
-            }
-
+            String list = getSetItem(adapterPosition);
             mLongClickListener.onListItemLongClick(list);
             return true;
         }

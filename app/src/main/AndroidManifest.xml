@@ -14,7 +14,8 @@
         <activity android:name=".AddNewListPopUp"
             android:theme="@style/Theme.ToODoO.AddNewListPopUp">
         </activity>
-        <activity android:name=".AddTodoActivity" />
+        <activity android:name=".AddTodoActivity"
+            android:parentActivityName=".MainActivity"/>
         <activity android:name=".MainActivity"
             android:launchMode="singleTop">
             <intent-filter>

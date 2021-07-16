@@ -1,14 +1,19 @@
 package com.yash.toodoo;
 
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
+import android.view.Window;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toolbar;
 
 import com.yash.toodoo.adapter.CompletedTodoListAdapter;
 import com.yash.toodoo.adapter.TodoListAdapter;
@@ -68,6 +73,12 @@ public class AddTodoActivity extends AppCompatActivity implements TodoListAdapte
                 mTodoList.setVisibility(View.VISIBLE);
             }
         });
+        Intent intent = getIntent();
+        ActionBar actionBar = getSupportActionBar();
+        if(intent.hasExtra(Intent.EXTRA_TEXT)){
+            actionBar.setTitle(intent.getStringExtra(Intent.EXTRA_TEXT));
+        }
+        actionBar.setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
