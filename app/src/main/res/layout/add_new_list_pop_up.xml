@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/popUpWindow"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".AddNewListPopUp">
+
+    <EditText
+        android:id="@+id/et_new_list_name"
+        android:layout_width="match_parent"
+        android:layout_height="42dp"
+        android:layout_margin="22dp"
+        android:hint="New List"
+        app:layout_constraintTop_toTopOf="@+id/popUpWindow"
+        app:layout_constraintLeft_toLeftOf="@+id/popUpWindow"/>
+
+    <Button
+        android:id="@+id/bt_add_new_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add"
+        android:textAllCaps="false"
+        android:layout_marginLeft="72dp"
+        android:backgroundTint="@color/black"
+        android:textColor="@color/white"
+
+        app:layout_constraintLeft_toLeftOf="@+id/popUpWindow"
+        app:layout_constraintTop_toBottomOf="@+id/et_new_list_name"/>
+
+    <Button
+        android:id="@+id/bt_cancel_new_list"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Cancel"
+        android:textAllCaps="false"
+        android:layout_marginLeft="22dp"
+        android:backgroundTint="@color/black"
+        android:textColor="@color/white"
+        app:layout_constraintLeft_toRightOf="@+id/bt_add_new_list"
+        app:layout_constraintTop_toBottomOf="@+id/et_new_list_name"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

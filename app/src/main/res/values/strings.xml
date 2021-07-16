@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">ToODoO</string>
+
+    <string name="tv_todo_label">Todo</string>
+    <string name="tv_completed_label">Completed</string>
+    <string name="et_add_todo_hint">Add Todo</string>
+
+</resources>
