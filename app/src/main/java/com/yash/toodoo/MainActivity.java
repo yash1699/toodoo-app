@@ -1,18 +1,29 @@
 package com.yash.toodoo;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.LiveData;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModel;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.app.Application;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PersistableBundle;
 import android.view.View;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yash.toodoo.adapter.ListAdapter;
+import com.yash.toodoo.database.List;
+import com.yash.toodoo.model.ListViewModel;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -20,6 +31,8 @@ public class MainActivity extends AppCompatActivity {
     private FloatingActionButton mAddNewListFAB;
     private TextView mNoListDisplay;
     private ListAdapter mAdapter;
+
+    private ListViewModel mListViewModel;
 
     private final int REQUEST_CODE = 0x998;
 
@@ -49,6 +62,40 @@ public class MainActivity extends AppCompatActivity {
             Intent addNewListPopUpIntent = new Intent(MainActivity.this, AddNewListPopUp.class);
             startActivityForResult(addNewListPopUpIntent,REQUEST_CODE);
         });
+
+
+        mListViewModel = new ViewModelProvider(this).get(ListViewModel.class);
+
+        java.util.List<List> allLists = mListViewModel.getAllLists();
+
+        if(allLists.size()!=0){
+            ArrayList<String> parsedList = getParsedLists(allLists);
+            mAdapter.addAllList(parsedList);
+        }
+
+        mListViewModel.getAllList().observe(this, new Observer<java.util.List<List>>() {
+            @Override
+            public void onChanged(java.util.List<List> lists) {
+                mAdapter.addAllList(getParsedLists(lists));
+            }
+        });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        if(mAdapter.getItemCount()!=0){
+            mNoListDisplay.setVisibility(View.INVISIBLE);
+            mRecyclerView.setVisibility(View.VISIBLE);
+        }
+    }
+
+    private ArrayList<String> getParsedLists(java.util.List<List> lists){
+        ArrayList<String> parsedList = new ArrayList<>();
+        for (List list: lists){
+            parsedList.add(list.listName);
+        }
+        return parsedList;
     }
 
     @Override
@@ -60,6 +107,7 @@ public class MainActivity extends AppCompatActivity {
                 if(data.hasExtra(Intent.EXTRA_TEXT)){
                     String list = data.getStringExtra(Intent.EXTRA_TEXT);
                     mAdapter.addNewList(list);
+                    mListViewModel.insert(new List(list));
                 }
             }
         }

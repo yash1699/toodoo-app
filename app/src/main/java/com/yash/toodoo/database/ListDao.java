@@ -1,5 +1,6 @@
 package com.yash.toodoo.database;
 
+import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
 import androidx.room.Delete;
 import androidx.room.Insert;
@@ -11,7 +12,10 @@ import java.util.List;
 public interface ListDao {
 
     @Query("SELECT listName FROM List")
-    List<String> getAll();
+    LiveData<List<com.yash.toodoo.database.List>> getAllList();
+
+    @Query("SELECT listName FROM List")
+    List<com.yash.toodoo.database.List> getAllLists();
 
     @Insert
     void insert(com.yash.toodoo.database.List list);
