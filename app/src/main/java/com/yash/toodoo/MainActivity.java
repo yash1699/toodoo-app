@@ -1,21 +1,16 @@
 package com.yash.toodoo;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.LiveData;
 import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
-import android.app.Application;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.os.Vibrator;
 import android.view.View;
 import android.widget.TextView;
@@ -37,6 +32,8 @@ public class MainActivity extends AppCompatActivity implements ListAdapter.ListI
     private ListViewModel mListViewModel;
 
     private final int REQUEST_CODE = 0x998;
+
+    private int mFabClickCount = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,6 +57,9 @@ public class MainActivity extends AppCompatActivity implements ListAdapter.ListI
         }
 
         mAddNewListFAB.setOnClickListener(v -> {
+            if(mFabClickCount != 0)
+                return;
+            mFabClickCount = 1;
             Intent addNewListPopUpIntent = new Intent(MainActivity.this, AddNewListPopUp.class);
             startActivityForResult(addNewListPopUpIntent,REQUEST_CODE);
         });
@@ -69,9 +69,11 @@ public class MainActivity extends AppCompatActivity implements ListAdapter.ListI
 
         java.util.List<List> allLists = mListViewModel.getAllLists();
 
-        if(allLists.size()!=0){
-            ArrayList<String> parsedList = getParsedLists(allLists);
-            mAdapter.addAllList(parsedList);
+        if(allLists!=null){
+            if(allLists.size()!=0){
+                ArrayList<String> parsedList = getParsedLists(allLists);
+                mAdapter.addAllList(parsedList);
+            }
         }
 
         mListViewModel.getAllList().observe(this, new Observer<java.util.List<List>>() {
@@ -100,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements ListAdapter.ListI
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        mFabClickCount = 0;
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == REQUEST_CODE){
             if(resultCode == Activity.RESULT_OK){
@@ -134,7 +137,7 @@ public class MainActivity extends AppCompatActivity implements ListAdapter.ListI
         mAdapter.removeList(list);
         if(mAdapter.getItemCount()==0){
             mNoListDisplay.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.VISIBLE);
+            mRecyclerView.setVisibility(View.INVISIBLE);
         }
     }
 }

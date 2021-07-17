@@ -21,6 +21,8 @@ public class ListRepository {
 
     private Application mApplication;
 
+    private List<com.yash.toodoo.database.List> mAllLists;
+
     public ListRepository(Application application){
         mApplication = application;
         ToODoODatabase db = ToODoODatabase.getInstance(mApplication);
@@ -42,7 +44,8 @@ public class ListRepository {
     }
 
     public List<com.yash.toodoo.database.List> getAllLists(){
-        return mListDao.getAllLists();
+        mAllLists = mListDao.getAllLists();
+        return mAllLists;
     }
 
     private static class insertAsyncTask extends AsyncTask<com.yash.toodoo.database.List,Void, Boolean> {
@@ -87,5 +90,4 @@ public class ListRepository {
             return null;
         }
     }
-
 }

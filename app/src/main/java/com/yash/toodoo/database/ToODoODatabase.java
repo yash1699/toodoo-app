@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {List.class, ToDo.class, Completed.class}, version = 1)
+@Database(entities = {List.class, ToDo.class, Completed.class}, version = 3)
 public abstract class ToODoODatabase extends RoomDatabase {
 
     public abstract ListDao listDao();
@@ -33,9 +33,5 @@ public abstract class ToODoODatabase extends RoomDatabase {
                 .fallbackToDestructiveMigration()
                 .allowMainThreadQueries()
                 .build();
-    }
-
-    public void cleanUp(){
-        INSTANCE = null;
     }
 }

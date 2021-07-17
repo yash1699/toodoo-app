@@ -12,10 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.yash.toodoo.R;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoListAdapterViewHolder> {
 
-    private ArrayList<String> mTodoList = new ArrayList<>();
+    private Set<String> mTodoList = new HashSet<>();
 
     private TodoListItemClickListener mClickListener;
 
@@ -37,7 +40,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoLi
 
     @Override
     public void onBindViewHolder(@NonNull TodoListAdapter.TodoListAdapterViewHolder holder, int position) {
-        String todo = mTodoList.get(position);
+        String todo = getSetItem(position);
         holder.mTodoListItemDisplay.setText(todo);
     }
 
@@ -55,9 +58,27 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoLi
         notifyDataSetChanged();
     }
 
+    public void addAllToDo(ArrayList<String> todos) {
+        mTodoList.addAll(todos);
+        notifyDataSetChanged();
+    }
+
     public void completeTodo(String todo){
         mTodoList.remove(todo);
         notifyDataSetChanged();
+    }
+
+    private String getSetItem(int position) {
+        int counter = 0;
+        String todo = "";
+        for(Iterator<String> it=mTodoList.iterator(); it.hasNext();it.next()) {
+            if(counter == position) {
+                todo = it.next();
+                break;
+            }
+            counter++;
+        }
+        return todo;
     }
 
     class TodoListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
@@ -77,7 +98,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoLi
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            String todo = mTodoList.get(adapterPosition);
+            String todo = getSetItem(adapterPosition);
             mClickListener.onClickTodoListItem(todo);
         }
     }

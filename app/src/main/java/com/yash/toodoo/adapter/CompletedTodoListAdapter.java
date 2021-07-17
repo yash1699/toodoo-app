@@ -12,10 +12,13 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.yash.toodoo.R;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 public class CompletedTodoListAdapter extends RecyclerView.Adapter<CompletedTodoListAdapter.CompletedTodoListAdapterViewHolder> {
 
-    private ArrayList<String> mCompletedTodoList = new ArrayList<>();
+    private Set<String> mCompletedTodoList = new HashSet<>();
 
     private CompletedTodoListItemClickListener mClickListener;
 
@@ -37,7 +40,7 @@ public class CompletedTodoListAdapter extends RecyclerView.Adapter<CompletedTodo
 
     @Override
     public void onBindViewHolder(@NonNull CompletedTodoListAdapter.CompletedTodoListAdapterViewHolder holder, int position) {
-        String completedTodo = mCompletedTodoList.get(position);
+        String completedTodo = getSetItem(position);
         holder.mCompletedTodoListDisplay.setText(completedTodo);
     }
 
@@ -55,9 +58,27 @@ public class CompletedTodoListAdapter extends RecyclerView.Adapter<CompletedTodo
         notifyDataSetChanged();
     }
 
+    public void completeAllTodo(ArrayList<String> todo) {
+        mCompletedTodoList.addAll(todo);
+        notifyDataSetChanged();
+    }
+
     public void removeCompletedTodo(String completedTodo){
         mCompletedTodoList.remove(completedTodo);
         notifyDataSetChanged();
+    }
+
+    private String getSetItem(int position) {
+        int counter = 0;
+        String completed = "";
+        for(Iterator<String> it=mCompletedTodoList.iterator(); it.hasNext();it.next()) {
+            if(counter == position) {
+                 completed = it.next();
+                 break;
+            }
+            counter++;
+        }
+        return completed;
     }
 
 
@@ -78,7 +99,7 @@ public class CompletedTodoListAdapter extends RecyclerView.Adapter<CompletedTodo
         @Override
         public void onClick(View v) {
             int adapterPosition = getAdapterPosition();
-            String completedTodo = mCompletedTodoList.get(adapterPosition);
+            String completedTodo = getSetItem(adapterPosition);
             mClickListener.onClickCompletedTodoListItem(completedTodo);
         }
     }
