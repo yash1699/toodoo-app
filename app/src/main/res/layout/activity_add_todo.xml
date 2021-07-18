@@ -1,18 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".AddTodoActivity">
-
+    android:layout_height="match_parent">
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="662dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-
+        android:layout_height="0dp"
+        android:layout_weight="9">
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -25,10 +20,7 @@
                 android:text="@string/tv_todo_label"
                 android:textSize="20sp"
                 android:layout_marginLeft="16dp"
-                android:visibility="invisible"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="parent"/>
-
+                android:visibility="invisible"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_todo_list"
@@ -36,9 +28,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:padding="22dp"
-                android:visibility="invisible"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_todo_label"/>
+                android:nestedScrollingEnabled="false"
+                android:visibility="invisible"/>
 
             <TextView
                 android:id="@+id/tv_completed_todo_label"
@@ -46,11 +37,8 @@
                 android:layout_height="wrap_content"
                 android:text="@string/tv_completed_label"
                 android:textSize="20sp"
-                android:layout_marginTop="16dp"
                 android:layout_marginLeft="16dp"
-                app:layout_constraintLeft_toLeftOf="parent"
-                android:visibility="invisible"
-                app:layout_constraintTop_toBottomOf="@+id/tv_todo_list"/>
+                android:visibility="invisible"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rv_completed_todo_list"
@@ -58,31 +46,36 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:padding="22dp"
-                android:visibility="invisible"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/tv_completed_todo_label"/>
-
+                android:nestedScrollingEnabled="false"
+                android:visibility="invisible"/>
         </LinearLayout>
-
     </ScrollView>
 
-    <EditText
-        android:id="@+id/et_add_todo"
-        android:layout_width="362dp"
-        android:layout_height="42dp"
-        android:layout_marginBottom="16dp"
-        android:hint="@string/et_add_todo_hint"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintBottom_toBottomOf="parent"/>
-
-    <TextView
-        android:id="@+id/bt_add_todo"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="16dp"
-        android:background="@drawable/add_todo_button_img"
-        android:backgroundTint="@android:color/holo_orange_dark"
-        app:layout_constraintLeft_toRightOf="@+id/et_add_todo"
-        app:layout_constraintBottom_toBottomOf="parent"/>
+        android:layout_weight="0.2"
+        android:orientation="horizontal"
+        android:windowSoftInputMode="stateVisible|adjustNothing">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <EditText
+            android:id="@+id/et_add_todo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7"
+            android:layout_marginTop="8dp"
+            android:hint="@string/et_add_todo_hint"
+            android:windowSoftInputMode="stateVisible|adjustNothing"/>
+
+        <TextView
+            android:id="@+id/bt_add_todo"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@drawable/add_todo_button_img"
+            android:backgroundTint="@android:color/holo_orange_dark"
+            android:windowSoftInputMode="stateVisible|adjustNothing"/>
+
+    </LinearLayout>
+
+</LinearLayout>

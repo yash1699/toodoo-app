@@ -51,6 +51,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoLi
 
     public interface TodoListItemClickListener{
         void onClickTodoListItem(String todo);
+        void onLongClickTodoListItem(String todo);
     }
 
     public void addNewTodo(String todo){
@@ -81,7 +82,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoLi
         return todo;
     }
 
-    class TodoListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class TodoListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private TextView mTodoListItemDisplay;
         private TextView mTodoListItemLogo;
@@ -92,7 +93,10 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoLi
             mTodoListItemLogo = itemView.findViewById(R.id.tv_todo_list_item_logo);
 
             mTodoListItemDisplay.setOnClickListener(this);
+            mTodoListItemDisplay.setOnLongClickListener(this);
+
             mTodoListItemLogo.setOnClickListener(this);
+            mTodoListItemLogo.setOnLongClickListener(this);
         }
 
         @Override
@@ -100,6 +104,14 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoLi
             int adapterPosition = getAdapterPosition();
             String todo = getSetItem(adapterPosition);
             mClickListener.onClickTodoListItem(todo);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            String todo = getSetItem(adapterPosition);
+            mClickListener.onLongClickTodoListItem(todo);
+            return true;
         }
     }
 

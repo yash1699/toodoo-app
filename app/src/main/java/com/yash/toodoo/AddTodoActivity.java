@@ -7,10 +7,12 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -99,7 +101,8 @@ public class AddTodoActivity extends AppCompatActivity implements TodoListAdapte
 
             ToDo toDo = new ToDo(mListName, todo);
             mToDoViewModel.insert(toDo);
-
+            mAddTodoEditText.setText("");
+            hideKeyboard();
             mTodoListAdapter.addNewTodo(todo);
             if(mTodoList.getVisibility() == View.INVISIBLE){
                 mTodoLabelDisplay.setVisibility(View.VISIBLE);
@@ -167,6 +170,26 @@ public class AddTodoActivity extends AppCompatActivity implements TodoListAdapte
         }
     }
 
+    @Override
+    public void onLongClickCompletedTodoListItem(String completedTodo) {
+        mCompletedViewModel.delete(new Completed(mListName, completedTodo));
+        mCompletedTodoListAdapter.removeCompletedTodo(completedTodo);
+
+        if(mCompletedTodoListAdapter.getItemCount() == 0) {
+            hideCompletedRecyclerView();
+        }
+    }
+
+    @Override
+    public void onLongClickTodoListItem(String todo) {
+        mToDoViewModel.delete(new ToDo(mListName, todo));
+        mTodoListAdapter.completeTodo(todo);
+
+        if(mTodoListAdapter.getItemCount() == 0) {
+            hideToDoRecyclerView();
+        }
+    }
+
     private void loadTodo(){
         List<ToDo> todos = mToDoViewModel.getAllToDo();
 
@@ -221,5 +244,13 @@ public class AddTodoActivity extends AppCompatActivity implements TodoListAdapte
             parsedCompleteds.add(completed.completed);
         }
         return parsedCompleteds;
+    }
+
+    private void hideKeyboard() {
+        View view = this.getCurrentFocus();
+        if(view != null) {
+            InputMethodManager imm = (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+            imm.hideSoftInputFromWindow(view.getWindowToken(), 0);
+        }
     }
 }

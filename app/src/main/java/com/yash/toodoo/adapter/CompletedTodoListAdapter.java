@@ -51,6 +51,7 @@ public class CompletedTodoListAdapter extends RecyclerView.Adapter<CompletedTodo
 
     public interface CompletedTodoListItemClickListener{
         void onClickCompletedTodoListItem(String completedTodo);
+        void onLongClickCompletedTodoListItem(String completedTodo);
     }
 
     public void completeTodo(String todo){
@@ -82,7 +83,7 @@ public class CompletedTodoListAdapter extends RecyclerView.Adapter<CompletedTodo
     }
 
 
-    class CompletedTodoListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    class CompletedTodoListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
 
         private TextView mCompletedTodoListDisplay;
         private TextView mCompletedTodoListLogo;
@@ -93,7 +94,10 @@ public class CompletedTodoListAdapter extends RecyclerView.Adapter<CompletedTodo
             mCompletedTodoListLogo = itemView.findViewById(R.id.tv_completed_todo_list_item_logo);
 
             mCompletedTodoListDisplay.setOnClickListener(this);
+            mCompletedTodoListDisplay.setOnLongClickListener(this);
+
             mCompletedTodoListLogo.setOnClickListener(this);
+            mCompletedTodoListLogo.setOnLongClickListener(this);
         }
 
         @Override
@@ -101,6 +105,14 @@ public class CompletedTodoListAdapter extends RecyclerView.Adapter<CompletedTodo
             int adapterPosition = getAdapterPosition();
             String completedTodo = getSetItem(adapterPosition);
             mClickListener.onClickCompletedTodoListItem(completedTodo);
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            int adapterPosition = getAdapterPosition();
+            String completedTodo = getSetItem(adapterPosition);
+            mClickListener.onLongClickCompletedTodoListItem(completedTodo);
+            return true;
         }
     }
 

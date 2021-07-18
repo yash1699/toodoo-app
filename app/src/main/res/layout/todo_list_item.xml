@@ -19,6 +19,7 @@
         android:layout_height="wrap_content"
         android:padding="8dp"
         android:layout_margin="8dp"
+        android:textColor="@color/white"
         app:layout_constraintLeft_toRightOf="@+id/tv_todo_list_item_logo"
         app:layout_constraintTop_toTopOf="parent"/>
 
