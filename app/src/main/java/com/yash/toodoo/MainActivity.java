@@ -12,13 +12,24 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Vibrator;
+import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yash.toodoo.adapter.ListAdapter;
 import com.yash.toodoo.database.List;
 import com.yash.toodoo.model.ListViewModel;
+import com.yash.toodoo.model.ToDoViewModel;
+import com.yash.toodoo.modelFactory.ToDoViewModelFactory;
 
 import java.util.ArrayList;
 
@@ -39,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements ListAdapter.ListI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
 
         mRecyclerView = findViewById(R.id.rv_list);
         mNoListDisplay = findViewById(R.id.tv_no_list);
@@ -130,14 +143,70 @@ public class MainActivity extends AppCompatActivity implements ListAdapter.ListI
     }
 
     @Override
-    public void onListItemLongClick(String list) {
+    public void onListItemLongClick(View v, String list) {
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(1000);
-        mListViewModel.delete(new List(list));
-        mAdapter.removeList(list);
-        if(mAdapter.getItemCount()==0){
-            mNoListDisplay.setVisibility(View.VISIBLE);
-            mRecyclerView.setVisibility(View.INVISIBLE);
-        }
+        PopupMenu popupMenu = new PopupMenu(this,v);
+        popupMenu.inflate(R.menu.list_options_menu);
+
+        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+            @Override
+            public boolean onMenuItemClick(MenuItem item) {
+                if(item.getItemId() == R.id.action_edit_list_name){
+                    showEditPopUp(v, list);
+                }
+                else {
+                    mListViewModel.delete(new List(list));
+                    mAdapter.removeList(list);
+                    if(mAdapter.getItemCount()==0){
+                        mNoListDisplay.setVisibility(View.VISIBLE);
+                        mRecyclerView.setVisibility(View.INVISIBLE);
+                    }
+                }
+                return true;
+            }
+        });
+        popupMenu.show();
     }
+
+    private void showEditPopUp(View view, String oldListName) {
+
+        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        View popupView = inflater.inflate(R.layout.list_edit_pop_up, null);
+
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        EditText editListNameEditText = popupView.findViewById(R.id.et_edit_list_name);
+
+        Button cancelEditListName = popupView.findViewById(R.id.bt_cancel_edit_list_name);
+
+        Button addEditListName = popupView.findViewById(R.id.bt_edit_list_name);
+
+        addEditListName.setOnClickListener(v -> {
+            String newListName = editListNameEditText.getText().toString();
+
+            if(TextUtils.isEmpty(newListName)) {
+                editListNameEditText.setError("Please write a name");
+                return;
+            }
+
+            boolean result = mListViewModel.update(newListName, oldListName);
+            if(result) {
+                mAdapter.removeList(oldListName);
+            }
+
+            popupWindow.dismiss();
+        });
+
+        cancelEditListName.setOnClickListener(v->{
+            popupWindow.dismiss();
+        });
+
+    }
+
 }

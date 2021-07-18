@@ -32,7 +32,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListAdapterVie
     }
 
     public interface ListItemOnLongClickListener{
-        void onListItemLongClick(String list);
+        void onListItemLongClick(View v, String list);
     }
 
     @NonNull
@@ -111,7 +111,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.ListAdapterVie
         public boolean onLongClick(View v) {
             int adapterPosition = getAdapterPosition();
             String list = getSetItem(adapterPosition);
-            mLongClickListener.onListItemLongClick(list);
+            mLongClickListener.onListItemLongClick(v, list);
             return true;
         }
     }

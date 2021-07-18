@@ -31,4 +31,6 @@ public class ListViewModel extends AndroidViewModel {
 
     public void delete(com.yash.toodoo.database.List list) { mRepository.delete(list); }
 
+    public boolean update(String newListName, String oldListName) { return mRepository.update(newListName, oldListName); }
+
 }

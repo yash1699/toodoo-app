@@ -8,7 +8,7 @@ import androidx.room.PrimaryKey;
 
 import static androidx.room.ForeignKey.CASCADE;
 
-@Entity(foreignKeys = @ForeignKey(entity = List.class, parentColumns = "listName", childColumns = "list_name", onDelete = CASCADE))
+@Entity(foreignKeys = @ForeignKey(entity = List.class, parentColumns = "listName", childColumns = "list_name", onDelete = CASCADE, onUpdate = CASCADE))
 public class Completed {
 
     @NonNull

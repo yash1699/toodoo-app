@@ -4,5 +4,7 @@
     <string name="tv_todo_label">Todo</string>
     <string name="tv_completed_label">Completed</string>
     <string name="et_add_todo_hint">Add Todo</string>
+    <string name="action_edit_list_name">Edit</string>
+    <string name="action_delete_list">Delete</string>
 
 </resources>

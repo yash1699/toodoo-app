@@ -43,6 +43,12 @@ public class ListRepository {
         new deleteAsyncTask(mListDao).execute(list);
     }
 
+    public boolean update(String newListName, String oldListName) {
+        updateAsyncTask task = new updateAsyncTask(mListDao, mApplication);
+        task.execute(new String[]{newListName,oldListName});
+        return task.getResult();
+    }
+
     public List<com.yash.toodoo.database.List> getAllLists(){
         mAllLists = mListDao.getAllLists();
         return mAllLists;
@@ -89,5 +95,38 @@ public class ListRepository {
             mAsyncListDao.delete(lists[0]);
             return null;
         }
+    }
+
+    private static class updateAsyncTask extends AsyncTask<String[], Void, Boolean> {
+        private ListDao mAsyncListDao;
+        private Application mApplication;
+        private boolean mResult = true;
+
+        updateAsyncTask(ListDao dao, Application application) {
+            mAsyncListDao = dao;
+            mApplication = application;
+        }
+
+        @Override
+        protected Boolean doInBackground(String[]... strings) {
+            boolean isSuccess = true;
+            try {
+                mAsyncListDao.update(strings[0][0], strings[0][1]);
+            } catch (SQLiteConstraintException exception) {
+                isSuccess = false;
+            }
+            return isSuccess;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if(!result) {
+                mResult = false;
+                Toast.makeText(mApplication.getApplicationContext(), "A list with same name already exist", Toast.LENGTH_SHORT).show();
+            }
+        }
+
+        protected boolean getResult() { return mResult; }
     }
 }

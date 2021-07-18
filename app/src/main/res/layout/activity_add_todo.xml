@@ -64,6 +64,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="7"
             android:layout_marginTop="8dp"
+            android:inputType="textMultiLine"
             android:hint="@string/et_add_todo_hint"
             android:windowSoftInputMode="stateVisible|adjustNothing"/>
 

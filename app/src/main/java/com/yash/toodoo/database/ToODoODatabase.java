@@ -6,7 +6,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-@Database(entities = {List.class, ToDo.class, Completed.class}, version = 3)
+@Database(entities = {List.class, ToDo.class, Completed.class}, version = 4)
 public abstract class ToODoODatabase extends RoomDatabase {
 
     public abstract ListDao listDao();
