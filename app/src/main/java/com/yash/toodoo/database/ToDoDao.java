@@ -17,6 +17,9 @@ public interface ToDoDao {
     @Query("Select * from ToDo where list_name = :listName")
     List<ToDo> getToDoOfList(String listName);
 
+    @Query("Update ToDo set todo = :newToDo where list_name = :listName AND todo = :oldToDo")
+    void updateToDo(String listName, String oldToDo, String newToDo);
+
     @Insert
     void insert(ToDo toDo);
 

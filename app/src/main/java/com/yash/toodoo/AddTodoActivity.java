@@ -10,10 +10,17 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.text.TextUtils;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.PopupMenu;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 
 import com.yash.toodoo.adapter.CompletedTodoListAdapter;
@@ -181,13 +188,59 @@ public class AddTodoActivity extends AppCompatActivity implements TodoListAdapte
     }
 
     @Override
-    public void onLongClickTodoListItem(String todo) {
-        mToDoViewModel.delete(new ToDo(mListName, todo));
-        mTodoListAdapter.completeTodo(todo);
+    public void onLongClickTodoListItem(View view, String todo) {
+        Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        vibrator.vibrate(1000);
+        PopupMenu popupMenu = new PopupMenu(this,view);
+        popupMenu.inflate(R.menu.options_menu);
 
-        if(mTodoListAdapter.getItemCount() == 0) {
-            hideToDoRecyclerView();
-        }
+        popupMenu.setOnMenuItemClickListener(item -> {
+            if(item.getItemId() == R.id.action_edit) {
+                shopEditPopUp(view, todo);
+            } else {
+                mToDoViewModel.delete(new ToDo(mListName, todo));
+                mTodoListAdapter.completeTodo(todo);
+
+                if(mTodoListAdapter.getItemCount() == 0) {
+                    hideToDoRecyclerView();
+                }
+            }
+            return true;
+        });
+        popupMenu.show();
+    }
+
+    private void shopEditPopUp(View view, String oldToDo) {
+        LayoutInflater inflater = getLayoutInflater();
+        View popupView = inflater.inflate(R.layout.edit_pop_up, null);
+
+        int width = LinearLayout.LayoutParams.WRAP_CONTENT;
+        int height = LinearLayout.LayoutParams.WRAP_CONTENT;
+
+        final PopupWindow popupWindow = new PopupWindow(popupView, width, height, true);
+
+        EditText editTodo = popupView.findViewById(R.id.et_edit);
+        Button addEdit = popupView.findViewById(R.id.bt_edit);
+        Button cancelEdit = popupView.findViewById(R.id.bt_cancel_edit);
+        editTodo.setHint("New Todo");
+
+        popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
+
+        addEdit.setOnClickListener(v -> {
+            String newToDo = editTodo.getText().toString();
+            if(TextUtils.isEmpty(newToDo)) {
+                editTodo.setError("Please write a todo.");
+                return;
+            }
+
+            boolean result = mToDoViewModel.updateToDO(oldToDo, newToDo);
+            if(result) {
+                mTodoListAdapter.completeTodo(oldToDo);
+            }
+            popupWindow.dismiss();
+        });
+
+        cancelEdit.setOnClickListener(v -> popupWindow.dismiss());
     }
 
     private void loadTodo(){

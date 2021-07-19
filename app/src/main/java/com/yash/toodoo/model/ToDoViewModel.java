@@ -32,4 +32,6 @@ public class ToDoViewModel extends AndroidViewModel {
 
     public void delete(ToDo toDo) { mRepository.delete(toDo); }
 
+    public boolean updateToDO(String oldToDo, String newToDo) { return mRepository.updateToDo(oldToDo, newToDo); }
+
 }

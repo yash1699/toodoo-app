@@ -51,7 +51,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoLi
 
     public interface TodoListItemClickListener{
         void onClickTodoListItem(String todo);
-        void onLongClickTodoListItem(String todo);
+        void onLongClickTodoListItem(View v,String todo);
     }
 
     public void addNewTodo(String todo){
@@ -110,7 +110,7 @@ public class TodoListAdapter extends RecyclerView.Adapter<TodoListAdapter.TodoLi
         public boolean onLongClick(View v) {
             int adapterPosition = getAdapterPosition();
             String todo = getSetItem(adapterPosition);
-            mClickListener.onLongClickTodoListItem(todo);
+            mClickListener.onLongClickTodoListItem(v,todo);
             return true;
         }
     }

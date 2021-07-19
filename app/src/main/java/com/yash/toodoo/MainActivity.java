@@ -15,7 +15,6 @@ import android.os.Vibrator;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -28,8 +27,6 @@ import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.yash.toodoo.adapter.ListAdapter;
 import com.yash.toodoo.database.List;
 import com.yash.toodoo.model.ListViewModel;
-import com.yash.toodoo.model.ToDoViewModel;
-import com.yash.toodoo.modelFactory.ToDoViewModelFactory;
 
 import java.util.ArrayList;
 
@@ -50,8 +47,6 @@ public class MainActivity extends AppCompatActivity implements ListAdapter.ListI
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
 
         mRecyclerView = findViewById(R.id.rv_list);
         mNoListDisplay = findViewById(R.id.tv_no_list);
@@ -147,33 +142,30 @@ public class MainActivity extends AppCompatActivity implements ListAdapter.ListI
         Vibrator vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
         vibrator.vibrate(1000);
         PopupMenu popupMenu = new PopupMenu(this,v);
-        popupMenu.inflate(R.menu.list_options_menu);
+        popupMenu.inflate(R.menu.options_menu);
 
-        popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-            @Override
-            public boolean onMenuItemClick(MenuItem item) {
-                if(item.getItemId() == R.id.action_edit_list_name){
-                    showEditPopUp(v, list);
-                }
-                else {
-                    mListViewModel.delete(new List(list));
-                    mAdapter.removeList(list);
-                    if(mAdapter.getItemCount()==0){
-                        mNoListDisplay.setVisibility(View.VISIBLE);
-                        mRecyclerView.setVisibility(View.INVISIBLE);
-                    }
-                }
-                return true;
+        popupMenu.setOnMenuItemClickListener(item -> {
+            if(item.getItemId() == R.id.action_edit){
+                showEditPopUp(v, list);
             }
+            else {
+                mListViewModel.delete(new List(list));
+                mAdapter.removeList(list);
+                if(mAdapter.getItemCount()==0){
+                    mNoListDisplay.setVisibility(View.VISIBLE);
+                    mRecyclerView.setVisibility(View.INVISIBLE);
+                }
+            }
+            return true;
         });
         popupMenu.show();
     }
 
     private void showEditPopUp(View view, String oldListName) {
 
-        LayoutInflater inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
+        LayoutInflater inflater = getLayoutInflater();
 
-        View popupView = inflater.inflate(R.layout.list_edit_pop_up, null);
+        View popupView = inflater.inflate(R.layout.edit_pop_up, null);
 
         int width = LinearLayout.LayoutParams.WRAP_CONTENT;
         int height = LinearLayout.LayoutParams.WRAP_CONTENT;
@@ -181,11 +173,11 @@ public class MainActivity extends AppCompatActivity implements ListAdapter.ListI
 
         popupWindow.showAtLocation(view, Gravity.CENTER, 0, 0);
 
-        EditText editListNameEditText = popupView.findViewById(R.id.et_edit_list_name);
+        EditText editListNameEditText = popupView.findViewById(R.id.et_edit);
 
-        Button cancelEditListName = popupView.findViewById(R.id.bt_cancel_edit_list_name);
+        Button cancelEditListName = popupView.findViewById(R.id.bt_cancel_edit);
 
-        Button addEditListName = popupView.findViewById(R.id.bt_edit_list_name);
+        Button addEditListName = popupView.findViewById(R.id.bt_edit);
 
         addEditListName.setOnClickListener(v -> {
             String newListName = editListNameEditText.getText().toString();

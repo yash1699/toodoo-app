@@ -49,6 +49,12 @@ public class ToDoRepository {
     }
 
     public void delete(ToDo toDo) { new deleteAsyncTask(mToDoDao).execute(toDo); }
+    
+    public boolean updateToDo(String oldToDo, String newToDo) {
+        updateAsyncTask task = new updateAsyncTask(mToDoDao, mApplication);
+        task.execute(new String[]{mListName, oldToDo, newToDo});
+        return task.getResult();
+    }
 
     private static class insertAsyncTask extends AsyncTask<ToDo, Void, Boolean> {
         private ToDoDao mAsyncToDoDao;
@@ -89,6 +95,40 @@ public class ToDoRepository {
         protected Void doInBackground(ToDo... toDos) {
             mAsyncToDoDao.delete(toDos[0]);
             return null;
+        }
+    }
+    
+    private static class updateAsyncTask extends AsyncTask<String[], Void, Boolean> {
+        private ToDoDao mAsyncToDoDao;
+        private Application mApplication;
+        private boolean mResult = true;
+        
+        updateAsyncTask(ToDoDao dao, Application application) {
+            mAsyncToDoDao = dao;
+            mApplication = application;
+        }
+
+        @Override
+        protected Boolean doInBackground(String[]... strings) {
+            boolean isSuccess = true;
+            try {
+                mAsyncToDoDao.updateToDo(strings[0][0], strings[0][1], strings[0][2]);
+            } catch (SQLiteConstraintException e) {
+                isSuccess = false;
+            }
+            return isSuccess;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean result) {
+            super.onPostExecute(result);
+            if(!result) {
+                mResult = false;
+            }
+        }
+        
+        protected boolean getResult() {
+            return mResult;
         }
     }
 }
